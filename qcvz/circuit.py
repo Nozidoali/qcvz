@@ -1,4 +1,4 @@
-"""Minimal QuantumCircuit data structure extracted from qcs.common.
+"""Minimal Circuit data structure extracted from qcs.common.
 
 Only a subset of the original functionality is retained: enough to model
 qubits, classical bits, and gate placement for visualization.
@@ -25,7 +25,7 @@ class GateType(Enum):
     CONDITIONAL = auto()
 
 
-class QuantumCircuit:
+class Circuit:
     """Simplified quantum circuit container."""
 
     def __init__(self):
@@ -51,9 +51,9 @@ class QuantumCircuit:
 
     # ------------------------------------------------------------------
     # Circuit composition
-    def append(self, other: "QuantumCircuit") -> None:
-        if not isinstance(other, QuantumCircuit):
-            raise TypeError("Can only append another QuantumCircuit")
+    def append(self, other: "Circuit") -> None:
+        if not isinstance(other, Circuit):
+            raise TypeError("Can only append another Circuit")
 
         classical_offset = self.n_classical_bits
         qubit_offset = self.n_qubits
@@ -85,8 +85,8 @@ class QuantumCircuit:
         for gate in gates:
             self.add_gate(gate)
 
-    def copy(self) -> "QuantumCircuit":
-        new_circuit = QuantumCircuit()
+    def copy(self) -> "Circuit":
+        new_circuit = Circuit()
         new_circuit.n_qubits = self.n_qubits
         new_circuit.n_classical_bits = self.n_classical_bits
         new_circuit.gates = [gate.copy() for gate in self.gates]

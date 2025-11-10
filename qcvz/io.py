@@ -2,15 +2,15 @@
 
 from __future__ import annotations
 
-from .quantum_circuit import GateType, QuantumCircuit
+from .circuit import GateType, Circuit
 
 import pyzx as zx
 
 
-def from_pyzx_circuit(pyzx_circuit: "zx.Circuit") -> QuantumCircuit:
-    """Convert a :mod:`pyzx` circuit to a :class:`QuantumCircuit`."""
+def from_pyzx_circuit(pyzx_circuit: "zx.Circuit") -> Circuit:
+    """Convert a :mod:`pyzx` circuit to a :class:`Circuit`."""
 
-    circuit = QuantumCircuit()
+    circuit = Circuit()
     circuit.request_qubits(pyzx_circuit.qubits)
 
     for gate in pyzx_circuit.gates:
@@ -45,8 +45,8 @@ def from_pyzx_circuit(pyzx_circuit: "zx.Circuit") -> QuantumCircuit:
     return circuit
 
 
-def to_pyzx_circuit(circuit: QuantumCircuit) -> "zx.Circuit":
-    """Convert a :class:`QuantumCircuit` into an equivalent :mod:`pyzx` circuit."""
+def to_pyzx_circuit(circuit: Circuit) -> "zx.Circuit":
+    """Convert a :class:`Circuit` into an equivalent :mod:`pyzx` circuit."""
 
     pyzx_circuit = zx.Circuit(circuit.n_qubits)
 
@@ -80,20 +80,20 @@ def to_pyzx_circuit(circuit: QuantumCircuit) -> "zx.Circuit":
     return pyzx_circuit
 
 
-def from_qasm(qasm: str) -> QuantumCircuit:
-    """Create a :class:`QuantumCircuit` from a QASM string via :mod:`pyzx`."""
+def from_qasm(qasm: str) -> Circuit:
+    """Create a :class:`Circuit` from a QASM string via :mod:`pyzx`."""
 
     return from_pyzx_circuit(zx.Circuit.from_qasm(qasm))
 
 
-def from_file(path: str) -> QuantumCircuit:
-    """Load a :class:`QuantumCircuit` from a file using :mod:`pyzx`'s reader."""
+def from_file(path: str) -> Circuit:
+    """Load a :class:`Circuit` from a file using :mod:`pyzx`'s reader."""
 
     return from_pyzx_circuit(zx.Circuit.load(path))
 
 
-def to_qasm(circuit: QuantumCircuit) -> str:
-    """Convert a :class:`QuantumCircuit` to an OpenQASM string via :mod:`pyzx`."""
+def to_qasm(circuit: Circuit) -> str:
+    """Convert a :class:`Circuit` to an OpenQASM string via :mod:`pyzx`."""
 
     return to_pyzx_circuit(circuit).to_qasm()
 

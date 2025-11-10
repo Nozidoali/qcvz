@@ -1,13 +1,12 @@
 from pathlib import Path
 
-from qcvz import from_file, plot_circuit, to_qasm
+from qcvz import Circuit, from_file, plot_circuit
+from qcvz.io import to_qasm
 
 
 def bell_pair():
     # Fallback circuit if the sample file cannot be read.
-    from qcvz import QuantumCircuit
-
-    circ = QuantumCircuit()
+    circ = Circuit()
     q0, q1 = circ.request_qubits(2)
     circ.add_h(q0)
     circ.add_cnot(q0, q1)

@@ -5,7 +5,7 @@ from __future__ import annotations
 import matplotlib.pyplot as plt
 import matplotlib.transforms as mtrans
 
-from .quantum_circuit import GateType, QuantumCircuit
+from .circuit import GateType, Circuit
 
 
 class QuantumCircuitVisualizer:
@@ -112,13 +112,13 @@ class QuantumCircuitVisualizer:
         )
 
     @staticmethod
-    def schedule_gates(circuit: QuantumCircuit, remove_overlap: bool = True) -> dict[int, int]:
+    def schedule_gates(circuit: Circuit, remove_overlap: bool = True) -> dict[int, int]:
         gate_loc: dict[int, int] = {}
         total_bits = circuit.n_qubits + circuit.n_classical_bits
         level = [-1] * total_bits
 
         for i, gate in enumerate(circuit.gates):
-            deps: set[int] = QuantumCircuit.deps_of(gate)
+            deps: set[int] = Circuit.deps_of(gate)
             gate_type = gate["type"]
 
             if gate_type is GateType.MEASURE and "classical_bit" in gate:
@@ -144,7 +144,7 @@ class QuantumCircuitVisualizer:
             gate_loc[i] = max_level
         return gate_loc
 
-    def _setup_figure(self, circ: QuantumCircuit, gloc: dict[int, int]) -> tuple:
+    def _setup_figure(self, circ: Circuit, gloc: dict[int, int]) -> tuple:
         cols = max(gloc.values()) + 1 if gloc else 1
         total_lines = circ.n_qubits + circ.n_classical_bits
 
@@ -157,7 +157,7 @@ class QuantumCircuitVisualizer:
 
         return fig, ax, cols, total_lines
 
-    def _draw_lines(self, ax, circ: QuantumCircuit, total_lines: int):
+    def _draw_lines(self, ax, circ: Circuit, total_lines: int):
         y = {q: (total_lines - 1 - q) * self.yc for q in range(total_lines)}
         tr = mtrans.blended_transform_factory(ax.transAxes, ax.transData)
 
@@ -244,7 +244,7 @@ class QuantumCircuitVisualizer:
             color="white",
         )
 
-    def _draw_measurement_gate(self, ax, p: float, y: dict, gate: dict, circ: QuantumCircuit):
+    def _draw_measurement_gate(self, ax, p: float, y: dict, gate: dict, circ: Circuit):
         qt = y[gate["qubit"]]
         color = self.colors.get(GateType.MEASURE, "orange")
         ax.plot(
@@ -272,7 +272,7 @@ class QuantumCircuitVisualizer:
             linewidth=self.line_width,
         )
 
-    def _draw_conditional_gate(self, ax, p: float, y: dict, gate: dict, circ: QuantumCircuit):
+    def _draw_conditional_gate(self, ax, p: float, y: dict, gate: dict, circ: Circuit):
         qt = y[gate["target"]]
         inner_type = gate.get("gate")
         gate_color = self.colors.get(inner_type, "purple") if inner_type else "purple"
@@ -343,7 +343,7 @@ class QuantumCircuitVisualizer:
             color="white",
         )
 
-    def _draw_gates(self, ax, circ: QuantumCircuit, gloc: dict[int, int], y: dict):
+    def _draw_gates(self, ax, circ: Circuit, gloc: dict[int, int], y: dict):
         x = {i: c * self.xc for i, c in gloc.items()}
 
         for i, gate in enumerate(circ.gates):
@@ -365,7 +365,7 @@ class QuantumCircuitVisualizer:
             else:
                 self._draw_unknown_gate(ax, p, y, gate, gate_type)
 
-    def plot_circuit(self, circ: QuantumCircuit, fn: str | None = None):
+    def plot_circuit(self, circ: Circuit, fn: str | None = None):
         gloc = self.schedule_gates(circ, self.remove_overlap)
         fig, ax, _, total_lines = self._setup_figure(circ, gloc)
         y = self._draw_lines(ax, circ, total_lines)
@@ -380,7 +380,7 @@ class QuantumCircuitVisualizer:
             plt.close(fig)
 
 
-def plot_circuit(circ: QuantumCircuit, fn: str | None = None):
+def plot_circuit(circ: Circuit, fn: str | None = None):
     visualizer = QuantumCircuitVisualizer()
     visualizer.plot_circuit(circ, fn)
 
